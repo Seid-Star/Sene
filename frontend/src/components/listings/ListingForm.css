@@ -1,0 +1,112 @@
+.listing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 560px;
+  color: var(--color-text, #1e2a22);
+  /* Ethiopic fonts as fallback so Amharic text renders on any device. */
+  font-family:
+    var(--font-body, system-ui), "Noto Sans Ethiopic", "Nyala", sans-serif;
+}
+
+.listing-form__note {
+  margin: 0;
+  color: var(--color-neutral, #5d5a52);
+  font-size: 0.9rem;
+}
+
+.listing-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.listing-form__field label {
+  font-weight: 600;
+}
+
+/* Quantity and unit sit side by side on wider screens, stacked on phones. */
+.listing-form__row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 480px) {
+  .listing-form__row {
+    flex-direction: row;
+  }
+}
+
+/* 16px font prevents iOS from zooming in; 48px height is touch-friendly. */
+.listing-form input,
+.listing-form select,
+.listing-form textarea {
+  min-height: 48px;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  font-size: 1rem;
+  color: inherit;
+  background: var(--color-surface, #fffdf8);
+  border: 1px solid var(--color-border, #b9b19c);
+  border-radius: 8px;
+}
+
+.listing-form textarea {
+  resize: vertical;
+}
+
+.listing-form input:focus-visible,
+.listing-form select:focus-visible,
+.listing-form textarea:focus-visible,
+.listing-form__submit:focus-visible {
+  outline: 3px solid var(--color-focus, #e0a526);
+  outline-offset: 2px;
+}
+
+/* Invalid fields get a thicker border AND a text message, not color alone. */
+.listing-form [aria-invalid="true"] {
+  border: 2px solid var(--color-error, #a32020);
+}
+
+.listing-form__error {
+  margin: 0;
+  color: var(--color-error, #a32020);
+  font-size: 0.9rem;
+}
+
+.listing-form__alert {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--color-error, #a32020);
+  border-radius: 8px;
+  color: var(--color-error, #a32020);
+  background: var(--color-error-bg, #fdf0ef);
+  font-weight: 600;
+}
+
+.listing-form__counter {
+  margin: 0;
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--color-neutral, #5d5a52);
+}
+
+.listing-form__submit {
+  min-height: 52px;
+  padding: 0 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-primary, #1f5d36);
+  color: #fff;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.listing-form__submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
