@@ -1,36 +1,71 @@
 .listing-form {
+  --lf-green: var(--color-primary, #1f5d36);
+  --lf-green-dark: var(--color-primary-dark, #174a2a);
+  --lf-green-soft: var(--color-primary-soft, #e8f1e9);
+  --lf-earth: var(--color-accent, #b8863b);
+  --lf-text: var(--color-text, #1e2a22);
+  --lf-muted: var(--color-neutral, #5d5a52);
+  --lf-border: var(--color-border, #cfc7b2);
+  --lf-error: var(--color-error, #a32020);
+  --lf-error-bg: var(--color-error-bg, #fdf0ef);
+  color-scheme: light;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
   max-width: 560px;
-  color: var(--color-text, #1e2a22);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 1.75rem;
+  background: #ffffff;
+  border: 1px solid var(--lf-border);
+  border-top: 6px solid var(--lf-green);
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(31, 93, 54, 0.1);
+  color: var(--lf-text);
   /* Ethiopic fonts as fallback so Amharic text renders on any device. */
   font-family:
     var(--font-body, system-ui), "Noto Sans Ethiopic", "Nyala", sans-serif;
+  line-height: 1.5;
+}
+
+@media (min-width: 480px) {
+  .listing-form {
+    padding: 2rem 2rem 2.25rem;
+  }
 }
 
 .listing-form__note {
   margin: 0;
-  color: var(--color-neutral, #5d5a52);
+  padding: 0.6rem 0.9rem;
+  background: var(--lf-green-soft);
+  border-left: 4px solid var(--lf-earth);
+  border-radius: 6px;
+  color: var(--lf-muted);
   font-size: 0.9rem;
 }
 
 .listing-form__field {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
   flex: 1;
 }
 
 .listing-form__field label {
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--lf-text);
+}
+
+/* The required star is also visible, not only color. */
+.listing-form__field label span {
+  color: var(--lf-error);
 }
 
 /* Quantity and unit sit side by side on wider screens, stacked on phones. */
 .listing-form__row {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 @media (min-width: 480px) {
@@ -39,74 +74,140 @@
   }
 }
 
-/* 16px font prevents iOS from zooming in; 48px height is touch-friendly. */
+/* 16px font prevents iOS from zooming in; 52px height is touch-friendly. */
 .listing-form input,
 .listing-form select,
 .listing-form textarea {
-  min-height: 48px;
-  padding: 0.5rem 0.75rem;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 52px;
+  padding: 0.6rem 0.9rem;
   font: inherit;
   font-size: 1rem;
-  color: inherit;
-  background: var(--color-surface, #fffdf8);
-  border: 1px solid var(--color-border, #b9b19c);
-  border-radius: 8px;
+  color: var(--lf-text);
+  background: #fffdf8;
+  border: 1.5px solid var(--lf-border);
+  border-radius: 10px;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background 0.15s;
+}
+
+.listing-form input::placeholder,
+.listing-form textarea::placeholder {
+  color: #6b675d;
+  opacity: 0.8;
+}
+
+.listing-form input:hover,
+.listing-form select:hover,
+.listing-form textarea:hover {
+  border-color: var(--lf-green);
+}
+
+.listing-form input:focus-visible,
+.listing-form select:focus-visible,
+.listing-form textarea:focus-visible {
+  outline: none;
+  background: #ffffff;
+  border-color: var(--lf-green);
+  box-shadow: 0 0 0 4px rgba(31, 93, 54, 0.22);
+}
+
+.listing-form select {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231f5d36' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  cursor: pointer;
 }
 
 .listing-form textarea {
   resize: vertical;
 }
 
-.listing-form input:focus-visible,
-.listing-form select:focus-visible,
-.listing-form textarea:focus-visible,
-.listing-form__submit:focus-visible {
-  outline: 3px solid var(--color-focus, #e0a526);
-  outline-offset: 2px;
+.listing-form input:disabled,
+.listing-form select:disabled,
+.listing-form textarea:disabled {
+  background: #f0ece0;
+  color: var(--lf-muted);
+  cursor: not-allowed;
 }
 
 /* Invalid fields get a thicker border AND a text message, not color alone. */
 .listing-form [aria-invalid="true"] {
-  border: 2px solid var(--color-error, #a32020);
+  border: 2px solid var(--lf-error);
+  background: var(--lf-error-bg);
+}
+
+.listing-form [aria-invalid="true"]:focus-visible {
+  box-shadow: 0 0 0 4px rgba(163, 32, 32, 0.2);
 }
 
 .listing-form__error {
   margin: 0;
-  color: var(--color-error, #a32020);
+  color: var(--lf-error);
   font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.listing-form__error::before {
+  content: "⚠ ";
 }
 
 .listing-form__alert {
   margin: 0;
-  padding: 0.75rem 1rem;
-  border: 2px solid var(--color-error, #a32020);
-  border-radius: 8px;
-  color: var(--color-error, #a32020);
-  background: var(--color-error-bg, #fdf0ef);
-  font-weight: 600;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--lf-error);
+  border-radius: 10px;
+  color: var(--lf-error);
+  background: var(--lf-error-bg);
+  font-weight: 700;
 }
 
 .listing-form__counter {
   margin: 0;
   text-align: right;
   font-size: 0.8rem;
-  color: var(--color-neutral, #5d5a52);
+  color: var(--lf-muted);
 }
 
 .listing-form__submit {
-  min-height: 52px;
+  width: 100%;
+  min-height: 56px;
+  margin-top: 0.25rem;
   padding: 0 1.5rem;
   border: none;
-  border-radius: 8px;
-  background: var(--color-primary, #1f5d36);
-  color: #fff;
+  border-radius: 12px;
+  background: var(--lf-green);
+  color: #ffffff;
   font: inherit;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(31, 93, 54, 0.3);
+  transition:
+    background 0.15s,
+    transform 0.1s;
+}
+
+.listing-form__submit:hover:not(:disabled) {
+  background: var(--lf-green-dark);
+}
+
+.listing-form__submit:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.listing-form__submit:focus-visible {
+  outline: 3px solid var(--lf-earth);
+  outline-offset: 3px;
 }
 
 .listing-form__submit:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  box-shadow: none;
 }
