@@ -1,0 +1,93 @@
+.voice-button {
+  --vb-green: var(--color-primary, #1f5d36);
+  --vb-green-dark: var(--color-primary-dark, #174a2a);
+  --vb-earth: var(--color-accent, #b8863b);
+  --vb-text: var(--color-text, #1e2a22);
+  --vb-muted: var(--color-neutral, #5d5a52);
+
+  color-scheme: light;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--vb-text);
+  font-family:
+    var(--font-body, system-ui), "Noto Sans Ethiopic", "Nyala", sans-serif;
+  cursor: pointer;
+}
+
+/* Big round circle: easy to hit with a thumb. */
+.voice-button__circle {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: var(--vb-green);
+  color: #ffffff;
+  font-size: 2.6rem;
+  box-shadow: 0 6px 18px rgba(31, 93, 54, 0.35);
+  transition:
+    background 0.15s,
+    transform 0.1s;
+}
+
+.voice-button__label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.voice-button:hover .voice-button__circle {
+  background: var(--vb-green-dark);
+}
+
+.voice-button:active .voice-button__circle {
+  transform: scale(0.96);
+}
+
+.voice-button:focus-visible {
+  outline: 3px solid var(--vb-earth);
+  outline-offset: 4px;
+  border-radius: 16px;
+}
+
+/* Listening: a square stop icon and a gentle ring. */
+.voice-button--listening .voice-button__circle {
+  background: var(--vb-green-dark);
+  animation: voice-button-ring 1.8s ease-out infinite;
+}
+
+@keyframes voice-button-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(31, 93, 54, 0.45);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 18px rgba(31, 93, 54, 0);
+  }
+}
+
+/* Processing or disabled: greyed out and not clickable. */
+.voice-button[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.voice-button[aria-disabled="true"] .voice-button__circle {
+  background: var(--vb-muted);
+  box-shadow: none;
+}
+
+.voice-button[aria-disabled="true"]:hover .voice-button__circle {
+  background: var(--vb-muted);
+}
+
+/* Stop the animation for people who asked their device for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .voice-button--listening .voice-button__circle {
+    animation: none;
+  }
+}
