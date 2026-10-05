@@ -50,6 +50,7 @@ app.get("/api/health", (_req, res) =>
   res.json({ success: true, status: "ok" }),
 );
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/listings", require("./routes/listingRoutes"));
 
 app.use(notFound);
 app.use(errorHandler);
