@@ -1,0 +1,191 @@
+.page {
+  --pg-green: var(--color-primary, #1f5d36);
+  --pg-green-dark: var(--color-primary-dark, #174a2a);
+  --pg-green-soft: var(--color-primary-soft, #e8f1e9);
+  --pg-earth: var(--color-accent, #b8863b);
+  --pg-text: var(--color-text, #1e2a22);
+  --pg-muted: var(--color-neutral, #5d5a52);
+  --pg-border: var(--color-border, #cfc7b2);
+  --pg-error: var(--color-error, #a32020);
+  --pg-error-bg: var(--color-error-bg, #fdf0ef);
+
+  color-scheme: light;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+  color: var(--pg-text);
+  font-family:
+    var(--font-body, system-ui), "Noto Sans Ethiopic", "Nyala", sans-serif;
+  line-height: 1.5;
+}
+
+.page__title {
+  margin: 0 0 1rem;
+  font-size: 1.6rem;
+}
+
+.page__message {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1.5px solid var(--pg-border);
+  border-radius: 12px;
+  background: #ffffff;
+  text-align: center;
+  font-weight: 600;
+}
+
+.page__message--error {
+  border: 2px solid var(--pg-error);
+  background: var(--pg-error-bg);
+  color: var(--pg-error);
+}
+
+.page__button {
+  min-height: 48px;
+  padding: 0 1.25rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--pg-green);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.page__button:hover {
+  background: var(--pg-green-dark);
+}
+
+.page__button--secondary {
+  border: 2px solid var(--pg-green);
+  background: #ffffff;
+  color: var(--pg-green);
+}
+
+.page__button--secondary:hover {
+  background: var(--pg-green-soft);
+}
+
+.page__button:focus-visible,
+.page__tab:focus-visible {
+  outline: 3px solid var(--pg-earth);
+  outline-offset: 2px;
+}
+
+.page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.page__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.page__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.page__tab {
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 1.5px solid var(--pg-green);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--pg-green);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.page__tab[aria-pressed="true"] {
+  background: var(--pg-green);
+  color: #ffffff;
+}
+
+.page__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.page__success {
+  max-width: 560px;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  border: 2px solid var(--pg-green);
+  border-radius: 16px;
+  background: var(--pg-green-soft);
+  text-align: center;
+}
+
+.page__success h2 {
+  margin: 0 0 0.5rem;
+}
+
+.page__success p {
+  margin: 0;
+}
+
+/* Transaction cards */
+.tx-card {
+  padding: 1rem;
+  border: 1px solid var(--pg-border);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(31, 93, 54, 0.08);
+}
+
+.tx-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.tx-card__title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.tx-card__role {
+  padding: 0.2rem 0.65rem;
+  border: 1.5px solid var(--pg-green);
+  border-radius: 999px;
+  color: var(--pg-green);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.tx-card__facts {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.tx-card__facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tx-card__facts dt {
+  color: var(--pg-muted);
+}
+
+.tx-card__facts dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
