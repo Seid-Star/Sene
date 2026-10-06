@@ -2,10 +2,10 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const morgan = require("morgan");
-const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const hpp = require("hpp");
 
+const makeLimiter = require("./utils/makeLimiter");
 const env = require("./config/env");
 const connectDB = require("./config/db");
 const AppError = require("./utils/AppError");
@@ -28,14 +28,12 @@ app.use(
     credentials: true,
   }),
 );
-if (!env.isProd) app.use(morgan("dev"));
+if (env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.use(
-  rateLimit({
+  makeLimiter({
     windowMs: 15 * 60 * 1000,
     limit: 300,
-    standardHeaders: true,
-    legacyHeaders: false,
     message: {
       success: false,
       message: "Too many requests. Please slow down.",
@@ -54,6 +52,12 @@ app.use(
 app.use(mongoSanitize()); // strips $ and . operators (NoSQL injection)
 app.use(hpp()); // HTTP parameter pollution
 
+// Never let browsers or proxies cache private API data
+app.use("/api", (_req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 // ---- Routes (ALWAYS after the security middleware above) ----
 app.get("/api/health", (_req, res) =>
   res.json({ success: true, status: "ok" }),
@@ -68,6 +72,10 @@ app.use(errorHandler);
 module.exports = app; // exported for tests
 
 if (require.main === module) {
+  process.on("unhandledRejection", (reason) =>
+    console.error("Unhandled rejection:", reason),
+  );
+
   connectDB()
     .then(() => {
       const server = app.listen(env.PORT, () =>
