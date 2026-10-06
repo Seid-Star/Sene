@@ -149,7 +149,7 @@ exports.acceptTransaction = asyncHandler(async (req, res) => {
       acceptedAt: now,
       expiresAt: new Date(now.getTime() + RESERVATION_HOURS * HOUR),
     },
-    { new: true },
+    { returnDocument: "after" },
   );
   if (!accepted) {
     await Listing.updateOne(
@@ -218,6 +218,13 @@ exports.payTransaction = asyncHandler(async (req, res) => {
   if (tx.expiresAt && tx.expiresAt < new Date())
     throw new AppError("The payment window has expired", 409);
 
+  // Already started? Return the same payment instead of creating a second reference.
+  if (tx.payment?.status === "pending" && tx.payment.reference) {
+    return sendTx(res, tx._id, 200, {
+      checkoutUrl: tx.payment.checkoutUrl || null,
+    });
+  }
+
   const seller = await User.findById(tx.seller);
   const result = await paymentService.initiatePayment({
     transactionId: tx.id,
@@ -284,7 +291,7 @@ exports.paymentWebhook = asyncHandler(async (req, res) => {
       "payment.status": "success",
       "payment.paidAt": now,
     },
-    { new: true },
+    { returnDocument: "after" },
   );
 
   if (paid) {
