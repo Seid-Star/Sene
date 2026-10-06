@@ -1,11 +1,11 @@
 const router = require("express").Router();
-const rateLimit = require("express-rate-limit");
+const makeLimiter = require("../utils/makeLimiter");
 const c = require("../controllers/listingController");
 const { protect } = require("../middleware/authMiddleware");
 const validate = require("../middleware/validate");
 const v = require("../validators/listingValidators");
 
-const writeLimiter = rateLimit({
+const writeLimiter = makeLimiter({
   windowMs: 15 * 60 * 1000,
   limit: 60,
   standardHeaders: true,

@@ -1,12 +1,12 @@
 const router = require("express").Router();
-const rateLimit = require("express-rate-limit");
+const makeLimiter = require('../utils/makeLimiter');
 const c = require("../controllers/authController");
 const { protect } = require("../middleware/authMiddleware");
 const validate = require("../middleware/validate");
 const v = require("../validators/authValidators");
 
 // Strict limiter for credential endpoints (brute-force protection)
-const authLimiter = rateLimit({
+const authLimiter = makeLimiter({
   windowMs: 15 * 60 * 1000,
   max: 20,
   standardHeaders: true,
