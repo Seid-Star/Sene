@@ -1,11 +1,11 @@
 const router = require("express").Router();
-const rateLimit = require("express-rate-limit");
+const makeLimiter = require("../utils/makeLimiter");
 const c = require("../controllers/transactionController");
 const { protect } = require("../middleware/authMiddleware");
 const validate = require("../middleware/validate");
 const v = require("../validators/transactionValidators");
 
-const writeLimiter = rateLimit({
+const writeLimiter = makeLimiter({
   windowMs: 15 * 60 * 1000,
   limit: 60,
   standardHeaders: true,
@@ -13,7 +13,7 @@ const writeLimiter = rateLimit({
   message: { success: false, message: "Too many actions. Please slow down." },
 });
 
-const webhookLimiter = rateLimit({
+const webhookLimiter = makeLimiter({
   windowMs: 60 * 1000,
   limit: 120,
   standardHeaders: true,
