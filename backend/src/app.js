@@ -4,7 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const mongoSanitize = require("express-mongo-sanitize");
 const hpp = require("hpp");
-
+const mongoose = require("mongoose");
 const makeLimiter = require("./utils/makeLimiter");
 const env = require("./config/env");
 const connectDB = require("./config/db");
@@ -15,13 +15,12 @@ const expireStaleReservations = require("./utils/expireReservations");
 const app = express();
 
 app.disable("x-powered-by");
-app.set("trust proxy", 1); // correct client IPs behind EthioDeploy's proxy (needed for rate limiting)
+app.set("trust proxy", 1);
 
 app.use(helmet());
 app.use(
   cors({
     origin: (origin, cb) => {
-      // no Origin header = server-to-server / curl / Postman
       if (!origin || env.clientOrigins.includes(origin)) return cb(null, true);
       cb(new AppError("Origin not allowed by CORS", 403));
     },
@@ -45,23 +44,27 @@ app.use(
   express.json({
     limit: "10kb",
     verify: (req, _res, buf) => {
-      req.rawBody = buf; // raw bytes, needed by Amir for webhook signature checks
+      req.rawBody = buf;
     },
   }),
 );
-app.use(mongoSanitize()); // strips $ and . operators (NoSQL injection)
-app.use(hpp()); // HTTP parameter pollution
+app.use(mongoSanitize());
+app.use(hpp());
 
-// Never let browsers or proxies cache private API data
 app.use("/api", (_req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
 });
 
-// ---- Routes (ALWAYS after the security middleware above) ----
-app.get("/api/health", (_req, res) =>
-  res.json({ success: true, status: "ok" }),
-);
+app.get("/api/health", (_req, res) => {
+  const dbUp = mongoose.connection.readyState === 1;
+  res.status(dbUp ? 200 : 503).json({
+    success: dbUp,
+    status: dbUp ? "ok" : "degraded",
+    db: dbUp ? "connected" : "disconnected",
+    uptime: Math.round(process.uptime()),
+  });
+});
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/listings", require("./routes/listingRoutes"));
 app.use("/api/transactions", require("./routes/transactionRoutes"));
@@ -69,7 +72,7 @@ app.use("/api/transactions", require("./routes/transactionRoutes"));
 app.use(notFound);
 app.use(errorHandler);
 
-module.exports = app; // exported for tests
+module.exports = app;
 
 if (require.main === module) {
   process.on("unhandledRejection", (reason) =>
@@ -93,7 +96,6 @@ if (require.main === module) {
         process.exit(1);
       });
 
-      // Release listings whose accepted deals were never paid
       setInterval(
         () =>
           expireStaleReservations().catch((e) =>
@@ -101,6 +103,17 @@ if (require.main === module) {
           ),
         10 * 60 * 1000,
       ).unref();
+
+      const shutdown = (signal) => {
+        console.log(`${signal} received, shutting down...`);
+        server.close(async () => {
+          await mongoose.connection.close();
+          process.exit(0);
+        });
+        setTimeout(() => process.exit(1), 10000).unref();
+      };
+      process.on("SIGTERM", () => shutdown("SIGTERM"));
+      process.on("SIGINT", () => shutdown("SIGINT"));
     })
     .catch((err) => {
       console.error("❌ Failed to start:", err.message);
