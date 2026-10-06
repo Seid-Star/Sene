@@ -1,9 +1,13 @@
-
+import { BrowserRouter } from "react-router-dom";
 import { VoxideClient, VoxideWidget } from "@voxide/react";
+
 import {
   getPriceSummary,
   createListing as createListingApi,
 } from "./services/listingService";
+
+import AppRoutes from "./routes/AppRoutes";
+import Navbar from "./components/layout/Navbar";
 
 const ai = new VoxideClient({
   publicKey: "vox_pub_0a4e956f6f7a89c099bf6d0362283a6b4b86f5d30ee47f95",
@@ -13,6 +17,7 @@ ai.register({
   getPrice: {
     description:
       "Get the current market price of a crop. Use this when the user asks how much a crop costs or asks for its current price.",
+
     params: {
       crop: {
         type: "string",
@@ -31,6 +36,7 @@ ai.register({
           "other",
         ],
       },
+
       region: {
         type: "string",
         required: false,
@@ -54,6 +60,7 @@ ai.register({
         ],
       },
     },
+
     handler: async ({ crop, region }) => {
       try {
         const result = await getPriceSummary(crop, region);
@@ -76,6 +83,7 @@ ai.register({
   createListing: {
     description:
       "Create a new produce listing for the farmer. Use this when the user wants to sell or list produce. The user must provide the crop, quantity, and either the total price or price per kilogram.",
+
     params: {
       crop: {
         type: "string",
@@ -194,10 +202,13 @@ ai.register({
 
 function App() {
   return (
-    <>
-      <h1>Sene Voice Test</h1>
+    <BrowserRouter>
+      <Navbar />
+
+      <AppRoutes />
+
       <VoxideWidget client={ai} />
-    </>
+    </BrowserRouter>
   );
 }
 
