@@ -9,6 +9,7 @@ const schema = z.object({
   JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
   JWT_EXPIRES_IN: z.string().default("7d"),
   CLIENT_ORIGINS: z.string().default("http://localhost:5173"),
+  PAYMENT_WEBHOOK_SECRET: z.string().min(16).optional(),
 });
 
 const parsed = schema.safeParse(process.env);
