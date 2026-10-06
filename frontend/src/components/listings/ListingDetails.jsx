@@ -1,217 +1,76 @@
-import { useRef, useState } from "react";
-import {
-  formatDate,
-  formatPrice,
-  formatQuantity,
-  getListingStatusLabel,
-} from "../../utils/formatters";
-import {
-  DEFAULT_LANGUAGE,
-  getListingDetailsLabels,
-} from "./listingDetailsLabels";
-import "./ListingDetails.css";
+import React from 'react';
+import { formatCurrency, formatDate } from '../../utils/formatters';
 
-// ASSUMPTION: these status values mean "can be bought". Confirm with Seid.
-const AVAILABLE_STATUSES = ["active", "available"];
+const ListingDetails = ({ listing, onBuyNow, isOwner }) => {
+  if (!listing) return null;
 
-// Props:
-//   listing               - listing object (assumed shape, confirm with Seid)
-//   isLoading             - true while the parent is fetching
-//   error                 - error message string from the parent, if any
-//   currentUserId         - id of the logged-in user (to block buying own listing)
-//   onRequestTransaction  - async (listing) => void, supplied by the page.
-//                           This component never calls the API itself.
-//   lang                  - 'am' | 'om' | 'en' (default 'am')
-function ListingDetails({
-  listing,
-  isLoading = false,
-  error = "",
-  currentUserId,
-  onRequestTransaction,
-  lang = DEFAULT_LANGUAGE,
-}) {
-  const t = getListingDetailsLabels(lang);
-
-  // Hooks must run before any early return, so they live at the top.
-  const [imageFailed, setImageFailed] = useState(false);
-  const [requesting, setRequesting] = useState(false);
-  const [requestSent, setRequestSent] = useState(false);
-  const [requestError, setRequestError] = useState("");
-  // A ref changes instantly, so it blocks a second tap before the button locks.
-  const requestingRef = useRef(false);
-
-  if (isLoading) {
-    return (
-      <p className="listing-details__message" role="status" lang={lang}>
-        {t.loading}
-      </p>
-    );
-  }
-
-  if (error) {
-    return (
-      <p
-        className="listing-details__message listing-details__message--error"
-        role="alert"
-        lang={lang}
-      >
-        {t.errorTitle} {error}
-      </p>
-    );
-  }
-
-  if (!listing) {
-    return (
-      <p className="listing-details__message" role="status" lang={lang}>
-        {t.notFound}
-      </p>
-    );
-  }
-
-  const {
-    cropName,
-    quantity,
-    unit,
-    pricePerUnit,
-    totalPrice,
-    location,
-    description,
-    imageUrl,
-    status,
-    createdAt,
-    seller,
-  } = listing;
-
-  const title = cropName || "—";
-  const showImage = imageUrl && !imageFailed;
-  const statusKey = String(status ?? "unknown").toLowerCase();
-  const isAvailable = AVAILABLE_STATUSES.includes(statusKey);
-
-  // ASSUMPTION: the seller id is seller._id or seller.id. Confirm with Seid.
-  const sellerId = seller?._id ?? seller?.id;
-  const isOwnListing =
-    currentUserId != null &&
-    sellerId != null &&
-    String(currentUserId) === String(sellerId);
-
-  const handleRequest = async () => {
-    if (requestingRef.current) return;
-    requestingRef.current = true;
-    setRequesting(true);
-    setRequestError("");
-
-    try {
-      await onRequestTransaction(listing);
-      // This only means the request was SENT. The deal is not confirmed
-      // until the backend says so.
-      setRequestSent(true);
-    } catch (err) {
-      setRequestError(err?.message || t.requestFailed);
-    } finally {
-      requestingRef.current = false;
-      setRequesting(false);
-    }
-  };
-
-  // Decide what the buyer sees in the action area.
-  let action;
-  if (isOwnListing) {
-    action = <p className="listing-details__note">{t.ownListing}</p>;
-  } else if (!isAvailable) {
-    action = <p className="listing-details__note">{t.notAvailable}</p>;
-  } else if (requestSent) {
-    action = (
-      <p className="listing-details__success" role="status">
-        {t.requestSent}
-      </p>
-    );
-  } else if (onRequestTransaction) {
-    action = (
-      <>
-        {requestError && (
-          <p className="listing-details__alert" role="alert">
-            {requestError}
-          </p>
-        )}
-        <button
-          type="button"
-          className="listing-details__button"
-          onClick={handleRequest}
-          disabled={requesting}
-          aria-busy={requesting}
-        >
-          {requesting ? t.sending : t.requestButton}
-        </button>
-      </>
-    );
-  }
+  const { title, category, price, quantity, unit, location, description, createdAt, seller } = listing;
 
   return (
-    <article className="listing-details" lang={lang}>
-      <div className="listing-details__media">
-        {showImage ? (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="h-64 md:h-full bg-gray-100 relative min-h-[300px]">
           <img
-            src={imageUrl}
+            src={listing.imageUrl || 'https://images.unsplash.com/photo-1595665593673-bf1ad72905c0?auto=format&fit=crop&q=80&w=800'}
             alt={title}
-            onError={() => setImageFailed(true)}
+            className="w-full h-full object-cover"
           />
-        ) : (
-          <div className="listing-details__placeholder" aria-hidden="true">
-            🌾
-          </div>
-        )}
-      </div>
-
-      <div className="listing-details__body">
-        <div className="listing-details__header">
-          <h2 className="listing-details__title">{title}</h2>
-          <span className="listing-details__status">
-            {getListingStatusLabel(status)}
+          <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full">
+            {category}
           </span>
         </div>
 
-        <p className="listing-details__price">
-          {formatPrice(pricePerUnit)}
-          {unit ? <span> / {unit}</span> : null}
-        </p>
-
-        <dl className="listing-details__facts">
+        <div className="p-6 md:p-8 flex flex-col justify-between space-y-6">
           <div>
-            <dt>{t.quantity}</dt>
-            <dd>{formatQuantity(quantity, unit)}</dd>
+            <div className="flex justify-between items-start">
+              <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+              <span className="text-xs text-gray-400">{formatDate(createdAt)}</span>
+            </div>
+
+            <p className="text-sm text-gray-500 mt-1">📍 {location || 'Location unspecified'}</p>
+
+            <div className="mt-6 bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
+              <p className="text-xs font-semibold text-emerald-800 uppercase tracking-wide">Unit Price</p>
+              <p className="text-3xl font-black text-emerald-700 mt-1">
+                {formatCurrency(price)} <span className="text-sm font-normal text-gray-500">/ {unit || 'kg'}</span>
+              </p>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between text-sm text-gray-700 border-b border-gray-100 pb-4">
+              <span>Available Quantity:</span>
+              <span className="font-bold text-gray-900">{quantity} {unit || 'kg'}</span>
+            </div>
+
+            {description && (
+              <div className="mt-4">
+                <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Description</h4>
+                <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+              </div>
+            )}
+
+            {seller && (
+              <div className="mt-4 text-xs text-gray-500">
+                Listed by: <span className="font-medium text-gray-800">{seller.name || 'Seller'}</span>
+              </div>
+            )}
           </div>
-          {/* Only shown when the backend sends it. We never calculate totals. */}
-          {totalPrice != null && (
-            <div>
-              <dt>{t.total}</dt>
-              <dd>{formatPrice(totalPrice)}</dd>
+
+          {!isOwner ? (
+            <button
+              onClick={onBuyNow}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.99]"
+            >
+              Initiate Purchase
+            </button>
+          ) : (
+            <div className="bg-amber-50 text-amber-800 text-center py-2.5 px-4 rounded-lg text-sm font-medium">
+              This is your listing
             </div>
           )}
-          <div>
-            <dt>{t.location}</dt>
-            <dd>{location || "—"}</dd>
-          </div>
-          {seller?.name && (
-            <div>
-              <dt>{t.seller}</dt>
-              <dd>{seller.name}</dd>
-            </div>
-          )}
-          <div>
-            <dt>{t.listed}</dt>
-            <dd>{formatDate(createdAt)}</dd>
-          </div>
-        </dl>
-
-        <section className="listing-details__description">
-          <h3>{t.description}</h3>
-          <p>{description || t.noDescription}</p>
-        </section>
-
-        <div className="listing-details__action">{action}</div>
+        </div>
       </div>
-    </article>
+    </div>
   );
-}
+};
 
 export default ListingDetails;

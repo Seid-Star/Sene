@@ -1,116 +1,51 @@
-import { useState } from "react";
-import {
-  formatPrice,
-  formatQuantity,
-  formatDate,
-  getListingStatusLabel,
-} from "../../utils/formatters";
-import "./ListingCard.css";
+import React from 'react';
+import { formatCurrency } from '../../utils/formatters';
 
-// Props:
-//   listing        - listing object (assumed shape, to be confirmed with Seid)
-//   onViewDetails  - optional callback, receives the listing
-//   children       - optional extra actions (e.g. Edit button on My Listings)
-function ListingCard({ listing, onViewDetails, children }) {
-  // Remember if the image failed to load, so we can show a placeholder.
-  const [imageFailed, setImageFailed] = useState(false);
-
-  if (!listing) return null;
-
-  const {
-    cropName,
-    quantity,
-    unit,
-    pricePerUnit,
-    totalPrice,
-    location,
-    imageUrl,
-    status,
-    createdAt,
-    seller,
-  } = listing;
-
-  const title = cropName || "Unnamed crop";
-  const showImage = imageUrl && !imageFailed;
-  const statusKey = String(status ?? "unknown").toLowerCase();
+const ListingCard = ({ listing, onViewDetails }) => {
+  const { _id, title, price, quantity, unit, location, imageUrl } = listing;
 
   return (
-    <article className="listing-card">
-      <div className="listing-card__media">
-        {showImage ? (
-          <img
-            src={imageUrl}
-            alt={title}
-            loading="lazy"
-            onError={() => setImageFailed(true)}
-          />
-        ) : (
-          <div className="listing-card__placeholder" aria-hidden="true">
-            🌾
-          </div>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col h-full">
+      <div className="relative h-48 w-full bg-gray-100">
+        <img
+          src={imageUrl || 'https://images.unsplash.com/photo-1595665593673-bf1ad72905c0?auto=format&fit=crop&q=80&w=400'}
+          alt={title}
+          className="w-full h-full object-cover"
+        />
+        {location && (
+          <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-medium">
+            📍 {location}
+          </span>
         )}
       </div>
 
-      <div className="listing-card__body">
-        <div className="listing-card__header">
-          <h3 className="listing-card__title">{title}</h3>
-          <span
-            className={`listing-card__status listing-card__status--${statusKey}`}
-          >
-            {getListingStatusLabel(status)}
-          </span>
+      <div className="p-5 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 truncate">{title}</h3>
+          
+          <div className="mt-3 flex items-baseline justify-between">
+            <span className="text-2xl font-black text-emerald-600">
+              {formatCurrency(price)}
+            </span>
+            <span className="text-sm text-gray-500 font-medium">
+              per {unit || 'kg'}
+            </span>
+          </div>
+
+          <p className="mt-2 text-sm text-gray-600">
+            Available: <span className="font-semibold text-gray-800">{quantity} {unit || 'kg'}</span>
+          </p>
         </div>
 
-        <p className="listing-card__price">
-          {formatPrice(pricePerUnit)}
-          <span className="listing-card__per-unit">
-            {unit ? ` / ${unit}` : ""}
-          </span>
-        </p>
-
-        <dl className="listing-card__facts">
-          <div>
-            <dt>Quantity</dt>
-            <dd>{formatQuantity(quantity, unit)}</dd>
-          </div>
-          {totalPrice != null && (
-            <div>
-              <dt>Total</dt>
-              <dd>{formatPrice(totalPrice)}</dd>
-            </div>
-          )}
-          <div>
-            <dt>Location</dt>
-            <dd>{location || "—"}</dd>
-          </div>
-          {seller?.name && (
-            <div>
-              <dt>Seller</dt>
-              <dd>{seller.name}</dd>
-            </div>
-          )}
-          <div>
-            <dt>Listed</dt>
-            <dd>{formatDate(createdAt)}</dd>
-          </div>
-        </dl>
-
-        <div className="listing-card__actions">
-          {onViewDetails && (
-            <button
-              type="button"
-              className="listing-card__button"
-              onClick={() => onViewDetails(listing)}
-              aria-label={`View details for ${title}`}
-            >
-              View details
-            </button>
-          )}
-          {children}
-        </div>
+        <button
+          onClick={() => onViewDetails && onViewDetails(_id)}
+          className="mt-5 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+        >
+          View Details
+        </button>
       </div>
-    </article>
+    </div>
   );
-}
+};
 
 export default ListingCard;
