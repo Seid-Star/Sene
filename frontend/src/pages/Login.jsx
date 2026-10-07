@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
@@ -6,7 +7,7 @@ function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "",
+    phone: "",
     password: "",
   });
 
@@ -24,18 +25,16 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     setError("");
     setLoading(true);
 
     try {
       await authService.login(formData);
-
       navigate("/marketplace");
     } catch (error) {
       setError(
         error.response?.data?.message ||
-          "Unable to log in. Please check your credentials.",
+          "Unable to log in. Please check your phone number and password.",
       );
     } finally {
       setLoading(false);
@@ -48,8 +47,11 @@ function Login() {
         {/* Left side */}
         <div className="hidden bg-green-700 p-12 text-white lg:flex lg:flex-col lg:justify-between">
           <div>
-            <img src="/sene.jpg" alt="SEN E Logo" className="h-16 w-16 rounded-full" />
-
+            <img
+              src="/sene.jpg"
+              alt="SENE Logo"
+              className="h-16 w-16 rounded-full"
+            />
 
             <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-green-200">
               Voice of the Harvest
@@ -77,10 +79,13 @@ function Login() {
         <div className="p-6 sm:p-10 lg:p-12">
           <div className="mx-auto max-w-md">
             <div className="mb-8">
-              <img src="/sene.jpg" alt="SEN E Logo" className="h-16 w-16 rounded-full" />
+              <img
+                src="/sene.jpg"
+                alt="SENE Logo"
+                className="h-16 w-16 rounded-full"
+              />
 
-
-              <p className="text-sm font-semibold text-green-700">
+              <p className="mt-5 text-sm font-semibold text-green-700">
                 Welcome back
               </p>
 
@@ -102,33 +107,32 @@ function Login() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="phone"
                   className="mb-2 block text-sm font-medium text-gray-700"
                 >
-                  Email address
+                  Phone number
                 </label>
 
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
                   onChange={handleChange}
-                  placeholder="you@example.com"
+                  placeholder="09XXXXXXXX"
                   required
+                  autoComplete="tel"
                   className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
                 />
               </div>
 
               <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Password
-                  </label>
-                </div>
+                <label
+                  htmlFor="password"
+                  className="mb-2 block text-sm font-medium text-gray-700"
+                >
+                  Password
+                </label>
 
                 <input
                   id="password"
@@ -138,6 +142,7 @@ function Login() {
                   onChange={handleChange}
                   placeholder="Enter your password"
                   required
+                  autoComplete="current-password"
                   className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
                 />
               </div>

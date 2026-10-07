@@ -6,7 +6,7 @@ function Register() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     phone: "",
     password: "",
@@ -26,18 +26,16 @@ function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     setError("");
     setLoading(true);
 
     try {
       await authService.register(formData);
-
       navigate("/marketplace");
     } catch (error) {
       setError(
         error.response?.data?.message ||
-          "Unable to create your account. Please try again.",
+          "Unable to create your account. Please try again."
       );
     } finally {
       setLoading(false);
@@ -51,8 +49,9 @@ function Register() {
         <div className="order-2 p-6 sm:p-10 lg:order-1 lg:p-12">
           <div className="mx-auto max-w-md">
             <div className="mb-8">
-              <img src="/sene.jpg" alt="SEN E Logo" className="h-16 w-16 rounded-full" />
-
+              <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 font-bold text-green-700 lg:hidden">
+                S
+              </div>
 
               <p className="text-sm font-semibold text-green-700">
                 Join SENE
@@ -76,17 +75,17 @@ function Register() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label
-                  htmlFor="name"
+                  htmlFor="fullName"
                   className="mb-2 block text-sm font-medium text-gray-700"
                 >
                   Full name
                 </label>
 
                 <input
-                  id="name"
-                  name="name"
+                  id="fullName"
+                  name="fullName"
                   type="text"
-                  value={formData.name}
+                  value={formData.fullName}
                   onChange={handleChange}
                   placeholder="Your full name"
                   required
@@ -150,7 +149,7 @@ function Register() {
                   onChange={handleChange}
                   placeholder="Create a password"
                   required
-                  minLength={6}
+                  minLength={8}
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
                 />
               </div>
