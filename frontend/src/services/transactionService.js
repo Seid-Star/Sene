@@ -1,15 +1,15 @@
 import api from "./api";
 
 /**
- * Initiate a new transaction for a produce listing
+ * Create a new transaction for a produce listing
  */
-const createTransaction = async ({ listingId, note, quantity }) => {
+const createTransaction = async ({ listingId, note }) => {
   try {
     const response = await api.post("/transactions", {
       listingId,
-      note,
-      ...(quantity && { quantity }),
+      ...(note && { note }),
     });
+
     return response.data;
   } catch (error) {
     throw new Error(
@@ -19,11 +19,15 @@ const createTransaction = async ({ listingId, note, quantity }) => {
 };
 
 /**
- * Fetch all transactions for the current user with optional filters
+ * Fetch transactions for the current user
+ * Optional filters: role, status, page, limit
  */
 const getTransactions = async (params = {}) => {
   try {
-    const response = await api.get("/transactions", { params });
+    const response = await api.get("/transactions", {
+      params,
+    });
+
     return response.data;
   } catch (error) {
     throw new Error(
@@ -33,11 +37,12 @@ const getTransactions = async (params = {}) => {
 };
 
 /**
- * Fetch details of a specific transaction by ID
+ * Fetch a specific transaction by ID
  */
 const getTransaction = async (id) => {
   try {
     const response = await api.get(`/transactions/${id}`);
+
     return response.data;
   } catch (error) {
     throw new Error(
@@ -47,11 +52,13 @@ const getTransaction = async (id) => {
 };
 
 /**
- * Accept a pending transaction offer (Seller action)
+ * Accept a transaction request
+ * Seller action
  */
 const acceptTransaction = async (id) => {
   try {
     const response = await api.patch(`/transactions/${id}/accept`);
+
     return response.data;
   } catch (error) {
     throw new Error(
@@ -61,11 +68,13 @@ const acceptTransaction = async (id) => {
 };
 
 /**
- * Reject a pending transaction offer (Seller action)
+ * Reject a transaction request
+ * Seller action
  */
 const rejectTransaction = async (id) => {
   try {
     const response = await api.patch(`/transactions/${id}/reject`);
+
     return response.data;
   } catch (error) {
     throw new Error(
@@ -75,11 +84,15 @@ const rejectTransaction = async (id) => {
 };
 
 /**
- * Cancel a transaction with a specified reason
+ * Cancel a transaction
+ * Buyer or seller action
  */
 const cancelTransaction = async (id, reason) => {
   try {
-    const response = await api.patch(`/transactions/${id}/cancel`, { reason });
+    const response = await api.patch(`/transactions/${id}/cancel`, {
+      ...(reason && { reason }),
+    });
+
     return response.data;
   } catch (error) {
     throw new Error(
@@ -89,11 +102,13 @@ const cancelTransaction = async (id, reason) => {
 };
 
 /**
- * Trigger payment processing for a transaction (via Links.et or internal service)
+ * Initiate payment for an accepted transaction
+ * Buyer action
  */
 const payTransaction = async (id) => {
   try {
     const response = await api.post(`/transactions/${id}/pay`);
+
     return response.data;
   } catch (error) {
     throw new Error(
@@ -103,11 +118,13 @@ const payTransaction = async (id) => {
 };
 
 /**
- * Mark a transaction as completed (e.g., after produce delivery/pickup)
+ * Mark a paid transaction as completed
+ * Buyer action
  */
 const completeTransaction = async (id) => {
   try {
     const response = await api.patch(`/transactions/${id}/complete`);
+
     return response.data;
   } catch (error) {
     throw new Error(
