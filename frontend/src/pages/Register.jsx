@@ -10,6 +10,9 @@ function Register() {
     email: "",
     phone: "",
     password: "",
+    preferredLanguage: "am",
+    region: "",
+    town: "",
   });
 
   const [error, setError] = useState("");
@@ -35,7 +38,8 @@ function Register() {
     } catch (error) {
       setError(
         error.response?.data?.message ||
-          "Unable to create your account. Please try again."
+          error.message ||
+          "Unable to create your account. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -49,11 +53,13 @@ function Register() {
         <div className="order-2 p-6 sm:p-10 lg:order-1 lg:p-12">
           <div className="mx-auto max-w-md">
             <div className="mb-8">
-              <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 font-bold text-green-700 lg:hidden">
-                S
-              </div>
+              <img
+                src="/sene.jpg"
+                alt="SENE Logo"
+                className="h-16 w-16 rounded-full"
+              />
 
-              <p className="text-sm font-semibold text-green-700">
+              <p className="mt-4 text-sm font-semibold text-green-700">
                 Join SENE
               </p>
 
@@ -73,6 +79,7 @@ function Register() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Full Name */}
               <div>
                 <label
                   htmlFor="fullName"
@@ -88,11 +95,14 @@ function Register() {
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="Your full name"
+                  minLength={2}
+                  maxLength={80}
                   required
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
                 />
               </div>
 
+              {/* Email */}
               <div>
                 <label
                   htmlFor="email"
@@ -108,11 +118,15 @@ function Register() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  required
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
                 />
+
+                <p className="mt-1 text-xs text-gray-400">
+                  Optional
+                </p>
               </div>
 
+              {/* Phone */}
               <div>
                 <label
                   htmlFor="phone"
@@ -131,8 +145,13 @@ function Register() {
                   required
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
                 />
+
+                <p className="mt-1 text-xs text-gray-400">
+                  Use your Ethiopian phone number
+                </p>
               </div>
 
+              {/* Password */}
               <div>
                 <label
                   htmlFor="password"
@@ -154,6 +173,72 @@ function Register() {
                 />
               </div>
 
+              {/* Preferred Language */}
+              <div>
+                <label
+                  htmlFor="preferredLanguage"
+                  className="mb-2 block text-sm font-medium text-gray-700"
+                >
+                  Preferred language
+                </label>
+
+                <select
+                  id="preferredLanguage"
+                  name="preferredLanguage"
+                  value={formData.preferredLanguage}
+                  onChange={handleChange}
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
+                >
+                  <option value="am">Amharic</option>
+                  <option value="om">Afaan Oromoo</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+
+              {/* Region + Town */}
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="region"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
+                    Region
+                  </label>
+
+                  <input
+                    id="region"
+                    name="region"
+                    type="text"
+                    value={formData.region}
+                    onChange={handleChange}
+                    placeholder="e.g. Oromia"
+                    maxLength={60}
+                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="town"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
+                    Town
+                  </label>
+
+                  <input
+                    id="town"
+                    name="town"
+                    type="text"
+                    value={formData.town}
+                    onChange={handleChange}
+                    placeholder="e.g. Adama"
+                    maxLength={60}
+                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
+                  />
+                </div>
+              </div>
+
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
