@@ -48,9 +48,8 @@ function Login() {
         {/* Left side */}
         <div className="hidden bg-green-700 p-12 text-white lg:flex lg:flex-col lg:justify-between">
           <div>
-            <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-xl font-bold text-green-700">
-              S
-            </div>
+            <img src="/sene.jpg" alt="SEN E Logo" className="h-16 w-16 rounded-full" />
+
 
             <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-green-200">
               Voice of the Harvest
@@ -78,9 +77,8 @@ function Login() {
         <div className="p-6 sm:p-10 lg:p-12">
           <div className="mx-auto max-w-md">
             <div className="mb-8">
-              <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 font-bold text-green-700 lg:hidden">
-                S
-              </div>
+              <img src="/sene.jpg" alt="SEN E Logo" className="h-16 w-16 rounded-full" />
+
 
               <p className="text-sm font-semibold text-green-700">
                 Welcome back

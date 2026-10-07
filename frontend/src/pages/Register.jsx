@@ -51,9 +51,8 @@ function Register() {
         <div className="order-2 p-6 sm:p-10 lg:order-1 lg:p-12">
           <div className="mx-auto max-w-md">
             <div className="mb-8">
-              <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 font-bold text-green-700 lg:hidden">
-                S
-              </div>
+              <img src="/sene.jpg" alt="SEN E Logo" className="h-16 w-16 rounded-full" />
+
 
               <p className="text-sm font-semibold text-green-700">
                 Join SENE

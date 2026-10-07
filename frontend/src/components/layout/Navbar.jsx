@@ -10,9 +10,7 @@ function Navbar() {
     <header className="sticky top-0 z-50 border-b border-gray-200/80 bg-white/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-green-600 text-lg font-bold text-white">
-            S
-          </div>
+          <img src="/sene.jpg" alt="SEN E Logo" className="h-16 w-16 rounded-full" />
 
           <div>
             <span className="text-xl font-bold tracking-tight text-gray-900">
