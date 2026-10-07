@@ -1,4 +1,4 @@
-import { BrowserRouter } from "react-router-dom";
+
 
 import { VoxideClient, VoxideWidget } from "@voxide/react";
 
@@ -9,7 +9,6 @@ import {
   updateListing as updateListingApi,
   cancelListing as cancelListingApi,
 } from "./services/listingService";
-
 import AppRoutes from "./routes/AppRoutes";
 import Navbar from "./components/layout/Navbar";
 
@@ -21,7 +20,6 @@ ai.register({
   getPrice: {
     description:
       "Get the current market price of a crop. Use this when the user asks how much a crop costs or asks for its current price.",
-
     params: {
       crop: {
         type: "string",
@@ -40,7 +38,6 @@ ai.register({
           "other",
         ],
       },
-
       region: {
         type: "string",
         required: false,
@@ -64,7 +61,6 @@ ai.register({
         ],
       },
     },
-
     handler: async ({ crop, region }) => {
       try {
         const result = await getPriceSummary(crop, region);
@@ -87,7 +83,6 @@ ai.register({
   createListing: {
     description:
       "Create a new produce listing for the farmer. Use this when the user wants to sell or list produce. The user must provide the crop, quantity, and either the total price or price per kilogram.",
-
     params: {
       crop: {
         type: "string",
@@ -106,46 +101,40 @@ ai.register({
           "other",
         ],
       },
-
       quantityKg: {
         type: "number",
         required: true,
         description:
           "The amount of produce the farmer wants to sell, in kilograms.",
       },
-
       totalPrice: {
         type: "number",
         required: false,
         description:
           "The total price for all of the produce in Ethiopian birr.",
       },
-
       pricePerKg: {
         type: "number",
         required: false,
         description:
           "The price for one kilogram in Ethiopian birr.",
       },
-
       quality: {
         type: "string",
         required: false,
         description: "The quality grade of the produce.",
         enum: ["ungraded", "grade1", "grade2", "grade3"],
       },
-
       variety: {
         type: "string",
         required: false,
-        description: "The variety of the crop, if the farmer mentions it.",
+        description: "The variety of the crop, if the user mentions it.",
       },
-
       description: {
         type: "string",
         required: false,
         description:
-          "Additional information about the produce, if the farmer mentions it.",
+          "Additional information about the produce, if the user mentions it.",
       },
     },
 
@@ -206,7 +195,6 @@ ai.register({
   getMyListings: {
     description:
       "Get the farmer's own produce listings. Use this when the user asks to see, check, or list their own produce listings.",
-
     params: {},
 
     handler: async () => {
@@ -231,49 +219,46 @@ ai.register({
   updateListing: {
     description:
       "Update the farmer's existing produce listing. Use this when the farmer wants to change the quantity, price, quality, variety, description, region, town, or harvest date of an existing listing.",
-
     params: {
       id: {
         type: "string",
         required: true,
-        description: "The ID of the listing the farmer wants to update.",
+        description:
+          "The ID of the listing the farmer wants to update.",
       },
-
       quantityKg: {
         type: "number",
         required: false,
-        description: "The new quantity of the produce in kilograms.",
+        description:
+          "The new quantity of the produce in kilograms.",
       },
-
       pricePerKg: {
         type: "number",
         required: false,
-        description: "The new price per kilogram in Ethiopian birr.",
+        description:
+          "The new price per kilogram in Ethiopian birr.",
       },
-
       quality: {
         type: "string",
         required: false,
         description: "The new quality grade of the produce.",
         enum: ["ungraded", "grade1", "grade2", "grade3"],
       },
-
       variety: {
         type: "string",
         required: false,
         description: "The new variety of the crop.",
       },
-
       description: {
         type: "string",
         required: false,
         description: "The new description of the produce.",
       },
-
       region: {
         type: "string",
         required: false,
-        description: "The new Ethiopian region of the listing.",
+        description:
+          "The new Ethiopian region of the listing.",
         enum: [
           "Addis Ababa",
           "Afar",
@@ -291,13 +276,11 @@ ai.register({
           "Tigray",
         ],
       },
-
       town: {
         type: "string",
         required: false,
         description: "The new town of the listing.",
       },
-
       harvestDate: {
         type: "string",
         required: false,
@@ -355,13 +338,13 @@ ai.register({
 
   cancelListing: {
     description:
-      "Cancel one of the farmer's active produce listings. Use this when the farmer wants to remove or cancel a listing.",
-
+      "Cancel one of the farmer's active produce listings. Use this when the user wants to remove or cancel a listing.",
     params: {
       id: {
         type: "string",
         required: true,
-        description: "The ID of the listing the farmer wants to cancel.",
+        description:
+          "The ID of the listing the farmer wants to update.",
       },
     },
 
@@ -388,11 +371,11 @@ ai.register({
 
 function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <AppRoutes />
-      <VoxideWidget client={ai} />
-    </BrowserRouter>
+    <>
+        <Navbar />
+        <AppRoutes />
+        <VoxideWidget client={ai} />
+    </>
   );
 }
 

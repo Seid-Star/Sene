@@ -1,53 +1,14 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { authService } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 function Profile() {
-  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-      } catch (error) {
-        setError(error.message || "Unable to load your profile.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProfile();
-  }, []);
-
-  const handleLogout = () => {
-    authService.logout();
-    navigate("/login");
-  };
-
-  if (loading) {
-    return (
-      <main className="min-h-[calc(100vh-4rem)] bg-[#f8faf8] px-4 py-12">
-        <div className="mx-auto max-w-4xl">
-          <div className="animate-pulse rounded-3xl bg-white p-8 shadow-sm ring-1 ring-gray-200">
-            <div className="h-8 w-48 rounded bg-gray-200" />
-            <div className="mt-4 h-4 w-72 rounded bg-gray-200" />
-            <div className="mt-8 h-24 rounded-2xl bg-gray-100" />
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  if (error || !user) {
+  if (!user) {
     return (
       <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-[#f8faf8] px-4">
         <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-xl">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-xl text-red-600">
             !
           </div>
 
@@ -56,7 +17,7 @@ function Profile() {
           </h1>
 
           <p className="mt-2 text-sm text-gray-500">
-            {error || "Please sign in to view your profile."}
+            Your account information could not be loaded.
           </p>
 
           <Link
@@ -70,13 +31,17 @@ function Profile() {
     );
   }
 
-  const name = user.name || user.fullName || "SENE User";
+  const name = user.fullName || "SENE User";
   const email = user.email || "Not provided";
   const phone = user.phone || "Not provided";
-  const role = user.role || "User";
+  const role = user.role || "user";
+  const region = user.region || "Not provided";
+  const town = user.town || "Not provided";
+  const language = user.preferredLanguage || "am";
 
   const initials = name
     .split(" ")
+    .filter(Boolean)
     .map((part) => part[0])
     .join("")
     .slice(0, 2)
@@ -98,8 +63,9 @@ function Profile() {
           </p>
         </div>
 
-        {/* Profile card */}
+        {/* Profile Card */}
         <section className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-200">
+          {/* Profile Header */}
           <div className="bg-green-700 px-6 py-8 sm:px-8">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
               <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white text-2xl font-bold text-green-700 shadow-sm">
@@ -113,7 +79,7 @@ function Profile() {
                   {email}
                 </p>
 
-                <span className="mt-3 inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-green-50">
+                <span className="mt-3 inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-medium capitalize text-green-50">
                   {role}
                 </span>
               </div>
@@ -127,6 +93,7 @@ function Profile() {
             </h3>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {/* Full Name */}
               <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                   Full name
@@ -137,6 +104,7 @@ function Profile() {
                 </p>
               </div>
 
+              {/* Email */}
               <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                   Email
@@ -147,6 +115,7 @@ function Profile() {
                 </p>
               </div>
 
+              {/* Phone */}
               <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                   Phone
@@ -157,6 +126,40 @@ function Profile() {
                 </p>
               </div>
 
+              {/* Region */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Region
+                </p>
+
+                <p className="mt-2 font-medium text-gray-900">
+                  {region}
+                </p>
+              </div>
+
+              {/* Town */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Town
+                </p>
+
+                <p className="mt-2 font-medium text-gray-900">
+                  {town}
+                </p>
+              </div>
+
+              {/* Language */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Preferred language
+                </p>
+
+                <p className="mt-2 font-medium uppercase text-gray-900">
+                  {language}
+                </p>
+              </div>
+
+              {/* Account Type */}
               <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                   Account type
@@ -164,6 +167,17 @@ function Profile() {
 
                 <p className="mt-2 font-medium capitalize text-gray-900">
                   {role}
+                </p>
+              </div>
+
+              {/* Account Status */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Account status
+                </p>
+
+                <p className="mt-2 font-medium text-green-600">
+                  {user.isActive ? "Active" : "Inactive"}
                 </p>
               </div>
             </div>
@@ -177,10 +191,24 @@ function Profile() {
                 Go to marketplace
               </Link>
 
+              <Link
+                to="/profile/edit"
+                className="rounded-xl border border-gray-300 px-5 py-3 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                Edit profile
+              </Link>
+
+              <Link
+                to="/profile/change-password"
+                className="rounded-xl border border-gray-300 px-5 py-3 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                Change password
+              </Link>
+
               <button
                 type="button"
-                onClick={handleLogout}
-                className="rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                onClick={logout}
+                className="rounded-xl border border-red-200 px-5 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
               >
                 Log out
               </button>

@@ -1,9 +1,10 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authService } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -22,15 +23,14 @@ function Login() {
       [name]: value,
     }));
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      await authService.login(formData);
-      navigate("/marketplace");
+      await login(formData);
+      navigate("/dashboard");
     } catch (error) {
       setError(
         error.response?.data?.message ||
