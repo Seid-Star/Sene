@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+
 import SearchBar from "../components/marketplace/SearchBar";
 import FilterBar from "../components/marketplace/FilterBar";
 import ProduceList from "../components/marketplace/ProduceList";
+
 import { getListings } from "../services/listingService";
 
 function Marketplace() {
@@ -19,11 +21,11 @@ function Marketplace() {
 
         const response = await getListings();
 
-        setListings(response.listings || response.data || []);
+        setListings(response.listings || []);
       } catch (err) {
         setError(
           err?.response?.data?.message ||
-            "Unable to load marketplace listings.",
+            "Unable to load marketplace listings."
         );
       } finally {
         setLoading(false);
@@ -34,23 +36,12 @@ function Marketplace() {
   }, []);
 
   const filteredListings = listings.filter((listing) => {
-    const name = (
-      listing.cropName ||
-      listing.crop ||
-      listing.name ||
-      ""
-    ).toLowerCase();
+    const crop = (listing.crop || "").toLowerCase();
 
-    const matchesSearch = name.includes(search.toLowerCase());
-
-    const listingCategory = (
-      listing.category ||
-      listing.cropType ||
-      ""
-    ).toLowerCase();
+    const matchesSearch = crop.includes(search.toLowerCase());
 
     const matchesCategory =
-      category === "all" || listingCategory === category;
+      category === "all" || crop === category.toLowerCase();
 
     return matchesSearch && matchesCategory;
   });
@@ -89,7 +80,9 @@ function Marketplace() {
               {loading
                 ? "Loading listings..."
                 : `${filteredListings.length} ${
-                    filteredListings.length === 1 ? "listing" : "listings"
+                    filteredListings.length === 1
+                      ? "listing"
+                      : "listings"
                   } available`}
             </p>
           </div>
