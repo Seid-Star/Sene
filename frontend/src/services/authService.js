@@ -1,41 +1,30 @@
-const API_URL = "/api/auth";
+
+import api from "./api";
 
 export const authService = {
   // Login user and store token
   async login(credentials) {
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
-    });
+    const response = await api.post("/auth/login", credentials);
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Login failed");
-    }
+    const data = response.data;
 
     if (data.token) {
       localStorage.setItem("token", data.token);
     }
+
     return data;
   },
 
   // Register new user
   async register(userData) {
-    const response = await fetch(`${API_URL}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
-    });
+    const response = await api.post("/auth/register", userData);
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Registration failed");
-    }
+    const data = response.data;
 
     if (data.token) {
       localStorage.setItem("token", data.token);
     }
+
     return data;
   },
 
@@ -47,20 +36,21 @@ export const authService = {
   // Fetch authenticated user profile
   async getCurrentUser() {
     const token = localStorage.getItem("token");
+
     if (!token) return null;
 
-    const response = await fetch(`${API_URL}/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const response = await api.get("/auth/me");
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+      }
 
-    if (!response.ok) {
-      localStorage.removeItem("token");
-      throw new Error("Session expired");
+      throw new Error(
+        error.response?.data?.message || "Session expired"
+      );
     }
-
-    return await response.json();
   },
 
   // Helper to check token existence
